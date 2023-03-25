@@ -22,7 +22,7 @@ To view a demo, compile using CMake and then run the output binary with the foll
 
 That will give something like this:
 
-![Demo]("/resources/example.gif")
+![Demo (if image doesn't load, view in resources/example.gif)]("/resources/example.gif")
 
 
 **NOTE:** This branch is the Non-CUDA version. This uses regular OpenMP parallelization for speed ups.
