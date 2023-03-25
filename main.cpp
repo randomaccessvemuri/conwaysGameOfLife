@@ -8,11 +8,13 @@
 #include <boost/program_options.hpp>
 
 
-void handleInput() {
+void handleInput(bool &paused) {
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
         if (e.type == SDL_QUIT) {
             exit(0);
+        } else if (e.type == SDLK_p) {
+            paused = !paused;
         }
     }
 }
@@ -62,7 +64,9 @@ int main(int argc, char *argv[]) {
             ("rows", po::value<int>(&gridRows)->default_value(100), "set number of rows")
             ("columns", po::value<int>(&gridColumns)->default_value(100), "set number of columns")
             ("screenWidth", po::value<int>(&screenWidth)->default_value(1000), "set screen width")
-            ("screenHeight", po::value<int>(&screenHeight)->default_value(1000), "set screen height");
+            ("screenHeight", po::value<int>(&screenHeight)->default_value(1000), "set screen height")
+            ("percentage", po::value<int>()->default_value(15), "set percentage of cells alive")
+            ;
 
 
     po::variables_map vm;
@@ -83,16 +87,19 @@ int main(int argc, char *argv[]) {
     Generation generation(gridRows, gridColumns);
     int counter = 0;
 
-    generation.randomizeGeneration(15);
+    generation.randomizeGeneration(vm["percentage"].as<int>());
 
+    bool paused = false;
 
     while (true) {
-        handleInput();
+        handleInput(paused);
         //printGeneration(generation.generation, gridRows, gridColumns);
         renderGeneration(&generation.generation, gridRows, gridColumns, gRenderer);
-        generation.evolve();
-        std::cout << "Generation Number: " <<counter << std::endl;
-        counter++;
+        if (!paused) {
+            generation.evolve();
+            std::cout << "Generation Number: " << counter << std::endl;
+            counter++;
+        }
     }
 
 
